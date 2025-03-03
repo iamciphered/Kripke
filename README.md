@@ -14,7 +14,7 @@
 ## Installation on Kali Linux
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/iamciphered/Kripke-AES-Tool.git
+git clone https://github.com/iamciphered/Kripke.git
 ```
 ```bash
 cd Kripke-AES-Tool
