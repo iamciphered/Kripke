@@ -82,8 +82,40 @@ class KripkeAES:
                 f.write(decrypted_data)
             
             console.print(f"[bold green]File decrypted successfully: {output_file}[/bold green]")
-        except (ValueError, KeyError) as e:
-            console.print(f"[bold red]Decryption failed: {e}[/bold red]")
+        except (ValueError, KeyError):
+            console.print("[bold yellow]Decryption failed, attempting brute-force...[/bold yellow]")
+            self.bruteforce_decrypt(input_file, output_file)
+
+    def bruteforce_decrypt(self, input_file, output_file):
+        if not os.path.exists("keys.txt"):
+            console.print("[bold red]Error: keys.txt not found. Provide a key list for brute-force.[/bold red]")
+            return
+        
+        with open("keys.txt", "r") as f:
+            keys = [line.strip() for line in f.readlines()]
+
+        with open(input_file, "r") as f:
+            encrypted_data = json.load(f)
+            iv_or_nonce = base64.b64decode(encrypted_data["iv_or_nonce"]) if encrypted_data["iv_or_nonce"] else b""
+            ciphertext = base64.b64decode(encrypted_data["ciphertext"])
+
+        for key in keys:
+            try:
+                key_bytes = base64.b64decode(key)
+                cipher, _ = self._get_cipher(iv_or_nonce)
+                if self.mode in [AES.MODE_CBC, AES.MODE_ECB]:
+                    decrypted_data = unpad(cipher.decrypt(ciphertext), AES.block_size)
+                else:
+                    decrypted_data = cipher.decrypt(ciphertext)
+                
+                with open(output_file, "wb") as f:
+                    f.write(decrypted_data)
+                console.print(f"[bold green]Brute-force successful! Key: {key}[/bold green]")
+                return
+            except Exception:
+                continue
+        
+        console.print("[bold red]Brute-force failed: No valid key found.[/bold red]")
 
     def _get_cipher(self, iv_or_nonce=b""):
         if self.mode in [AES.MODE_EAX, AES.MODE_GCM, AES.MODE_CTR]:
@@ -130,3 +162,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
