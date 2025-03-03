@@ -21,6 +21,8 @@ cd Kripke-AES-Tool
 ### 2. Set Up a Virtual Environment (Recommended)
 ```bash
 python3 -m venv venv
+```
+```bash
 source venv/bin/activate
 ```
 
