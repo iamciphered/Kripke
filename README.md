@@ -15,6 +15,8 @@
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/iamciphered/Kripke-AES-Tool.git
+```
+```bash
 cd Kripke-AES-Tool
 ```
 
