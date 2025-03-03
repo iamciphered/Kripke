@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+import threading
 from rich.console import Console
 from rich.prompt import Prompt
 from Crypto.Cipher import AES
@@ -22,7 +23,7 @@ def print_banner():
  #00  000 #00   000 #000000  #00      #00 0000 #0000000
 
 [/bold green]
-[bold blue]Universal AES Encryption & Bruteforce-Force Decryption Tool[/bold blue]
+[bold blue]Universal AES Encryption & Brute-Force Decryption Tool[/bold blue]
     """
     console.print(banner)
 
@@ -70,10 +71,11 @@ class KripkeAES:
         
         try:
             iv_or_nonce = base64.b64decode(encrypted_data["iv_or_nonce"]) if encrypted_data["iv_or_nonce"] else b""
-            cipher, _ = self._get_cipher(iv_or_nonce)
+            mode = getattr(AES, f"MODE_{encrypted_data['mode']}")
+            cipher, _ = self._get_cipher(iv_or_nonce, mode)
             
             ciphertext = base64.b64decode(encrypted_data["ciphertext"])
-            if self.mode in [AES.MODE_CBC, AES.MODE_ECB]:
+            if mode in [AES.MODE_CBC, AES.MODE_ECB]:
                 decrypted_data = unpad(cipher.decrypt(ciphertext), AES.block_size)
             else:
                 decrypted_data = cipher.decrypt(ciphertext)
@@ -99,11 +101,12 @@ class KripkeAES:
             iv_or_nonce = base64.b64decode(encrypted_data["iv_or_nonce"]) if encrypted_data["iv_or_nonce"] else b""
             ciphertext = base64.b64decode(encrypted_data["ciphertext"])
 
-        for key in keys:
+        def attempt_decrypt(key):
             try:
                 key_bytes = base64.b64decode(key)
-                cipher, _ = self._get_cipher(iv_or_nonce)
-                if self.mode in [AES.MODE_CBC, AES.MODE_ECB]:
+                mode = getattr(AES, f"MODE_{encrypted_data['mode']}")
+                cipher, _ = self._get_cipher(iv_or_nonce, mode)
+                if mode in [AES.MODE_CBC, AES.MODE_ECB]:
                     decrypted_data = unpad(cipher.decrypt(ciphertext), AES.block_size)
                 else:
                     decrypted_data = cipher.decrypt(ciphertext)
@@ -111,20 +114,30 @@ class KripkeAES:
                 with open(output_file, "wb") as f:
                     f.write(decrypted_data)
                 console.print(f"[bold green]Brute-force successful! Key: {key}[/bold green]")
-                return
+                return True
             except Exception:
-                continue
+                return False
+        
+        threads = []
+        for key in keys:
+            thread = threading.Thread(target=attempt_decrypt, args=(key,))
+            threads.append(thread)
+            thread.start()
+        
+        for thread in threads:
+            thread.join()
         
         console.print("[bold red]Brute-force failed: No valid key found.[/bold red]")
 
-    def _get_cipher(self, iv_or_nonce=b""):
-        if self.mode in [AES.MODE_EAX, AES.MODE_GCM, AES.MODE_CTR]:
+    def _get_cipher(self, iv_or_nonce=b"", mode=None):
+        mode = mode or self.mode
+        if mode in [AES.MODE_EAX, AES.MODE_GCM, AES.MODE_CTR]:
             nonce = iv_or_nonce or get_random_bytes(16)
-            return AES.new(self.key, self.mode, nonce=nonce), nonce
-        elif self.mode in [AES.MODE_CBC, AES.MODE_CFB, AES.MODE_OFB]:
+            return AES.new(self.key, mode, nonce=nonce), nonce
+        elif mode in [AES.MODE_CBC, AES.MODE_CFB, AES.MODE_OFB]:
             iv = iv_or_nonce or get_random_bytes(16)
-            return AES.new(self.key, self.mode, iv=iv), iv
-        elif self.mode == AES.MODE_ECB:
+            return AES.new(self.key, mode, iv=iv), iv
+        elif mode == AES.MODE_ECB:
             return AES.new(self.key, AES.MODE_ECB), None
         else:
             raise ValueError("Unsupported AES mode")
@@ -145,15 +158,13 @@ def main():
         if choice == "1":
             input_file = Prompt.ask("Enter the file path to encrypt")
             output_file = input_file + ".enc"
-            mode = Prompt.ask("Choose AES mode", choices=["EAX", "CBC", "OFB", "CTR", "GCM", "ECB"], default="EAX").upper()
-            cipher = KripkeAES(key, getattr(AES, f"MODE_{mode}"))
+            cipher = KripkeAES(key, AES.MODE_EAX)
             cipher.encrypt_file(input_file, output_file)
 
         elif choice == "2":
             input_file = Prompt.ask("Enter the file path to decrypt")
             output_file = input_file + ".dec"
-            mode = Prompt.ask("Choose AES mode", choices=["EAX", "CBC", "OFB", "CTR", "GCM", "ECB"], default="CBC").upper()
-            cipher = KripkeAES(key, getattr(AES, f"MODE_{mode}"))
+            cipher = KripkeAES(key, AES.MODE_CBC)
             cipher.decrypt_file(input_file, output_file)
 
         elif choice == "3":
@@ -162,5 +173,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 
