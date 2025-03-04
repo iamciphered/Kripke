@@ -12,6 +12,8 @@ import tempfile
 
 console = Console()
 
+MAX_FILE_SIZE_MB = 1024  # Set the maximum allowed file size for decryption to 1GB
+
 def print_banner():
     banner = """
 [bold green]
@@ -61,9 +63,14 @@ class KripkeAES:
 
         console.print(f"[bold green]File encrypted successfully: {output_file}[/bold green]")
 
-    def decrypt_file(self, input_file, output_file):
+    def decrypt_file(self, input_file, output_file, key_list=None):
         if not os.path.exists(input_file):
             console.print("[bold red]Error: File not found. Please check the path.[/bold red]")
+            return
+
+        file_size_mb = os.path.getsize(input_file) / (1024 * 1024)
+        if file_size_mb > MAX_FILE_SIZE_MB:
+            console.print("[bold red]Error: File too large for decryption (limit is 1GB).[/bold red]")
             return
 
         with open(input_file, "r") as f:
@@ -86,48 +93,7 @@ class KripkeAES:
             console.print(f"[bold green]File decrypted successfully: {output_file}[/bold green]")
         except (ValueError, KeyError):
             console.print("[bold yellow]Decryption failed, attempting brute-force...[/bold yellow]")
-            self.bruteforce_decrypt(input_file, output_file)
-
-    def bruteforce_decrypt(self, input_file, output_file):
-        if not os.path.exists("keys.txt"):
-            console.print("[bold red]Error: keys.txt not found. Provide a key list for brute-force.[/bold red]")
-            return
-        
-        with open("keys.txt", "r") as f:
-            keys = [line.strip() for line in f.readlines()]
-
-        with open(input_file, "r") as f:
-            encrypted_data = json.load(f)
-            iv_or_nonce = base64.b64decode(encrypted_data["iv_or_nonce"]) if encrypted_data["iv_or_nonce"] else b""
-            ciphertext = base64.b64decode(encrypted_data["ciphertext"])
-
-        def attempt_decrypt(key):
-            try:
-                key_bytes = base64.b64decode(key)
-                mode = getattr(AES, f"MODE_{encrypted_data['mode']}")
-                cipher, _ = self._get_cipher(iv_or_nonce, mode)
-                if mode in [AES.MODE_CBC, AES.MODE_ECB]:
-                    decrypted_data = unpad(cipher.decrypt(ciphertext), AES.block_size)
-                else:
-                    decrypted_data = cipher.decrypt(ciphertext)
-                
-                with open(output_file, "wb") as f:
-                    f.write(decrypted_data)
-                console.print(f"[bold green]Brute-force successful! Key: {key}[/bold green]")
-                return True
-            except Exception:
-                return False
-        
-        threads = []
-        for key in keys:
-            thread = threading.Thread(target=attempt_decrypt, args=(key,))
-            threads.append(thread)
-            thread.start()
-        
-        for thread in threads:
-            thread.join()
-        
-        console.print("[bold red]Brute-force failed: No valid key found.[/bold red]")
+            self.bruteforce_decrypt(input_file, output_file, key_list)
 
     def _get_cipher(self, iv_or_nonce=b"", mode=None):
         mode = mode or self.mode
@@ -165,7 +131,8 @@ def main():
             input_file = Prompt.ask("Enter the file path to decrypt")
             output_file = input_file + ".dec"
             cipher = KripkeAES(key, AES.MODE_CBC)
-            cipher.decrypt_file(input_file, output_file)
+            key_list = Prompt.ask("Enter a key list (comma-separated)").split(',')
+            cipher.decrypt_file(input_file, output_file, key_list)
 
         elif choice == "3":
             console.print("[bold magenta]Exiting...[/bold magenta]")
