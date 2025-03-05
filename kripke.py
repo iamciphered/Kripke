@@ -55,7 +55,7 @@ class KripkeAES:
             ciphertext = cipher.encrypt(data)
 
         encrypted_data = {
-            "mode": self.mode,
+            "mode": self.mode.name,  # Store mode as string
             "iv_or_nonce": base64.b64encode(iv_or_nonce).decode() if iv_or_nonce else "",
             "ciphertext": base64.b64encode(ciphertext).decode()
         }
@@ -85,10 +85,16 @@ class KripkeAES:
         
         try:
             iv_or_nonce = base64.b64decode(encrypted_data["iv_or_nonce"]) if encrypted_data["iv_or_nonce"] else b""
-            mode = getattr(AES, f"MODE_{encrypted_data['mode']}")
-            cipher, _ = self._get_cipher(iv_or_nonce, mode)
+            mode_str = encrypted_data["mode"]
+            mode = getattr(AES, f"MODE_{mode_str}", None)
             
+            if mode is None:
+                console.print(f"[bold red]Error: Unsupported AES mode '{mode_str}' found in file.[/bold red]")
+                return
+            
+            cipher, _ = self._get_cipher(iv_or_nonce, mode)
             ciphertext = base64.b64decode(encrypted_data["ciphertext"])
+            
             if mode in [AES.MODE_CBC, AES.MODE_ECB]:
                 decrypted_data = unpad(cipher.decrypt(ciphertext), AES.block_size)
             else:
@@ -140,8 +146,9 @@ def main():
         elif choice == "2":
             input_file = Prompt.ask("Enter the file path to decrypt (e.g., /home/user/document.txt.enc)").strip()
             output_file = input_file + ".dec"
-            cipher = KripkeAES(key, AES.MODE_CBC)
             key_list = Prompt.ask("Enter a key list (comma-separated)").strip().split(',')
+            key_list = [base64.b64decode(k.strip()) for k in key_list if k.strip()]
+            cipher = KripkeAES(key, AES.MODE_CBC)
             cipher.decrypt_file(input_file, output_file, key_list)
 
         elif choice == "3":
