@@ -131,7 +131,10 @@ def main():
         if choice == "1":
             input_file = Prompt.ask("Enter the file path to encrypt").strip()
             output_file = input_file + ".enc"
-            cipher = KripkeAES(key, AES.MODE_EAX)
+            console.print("Select AES mode: EAX, CBC, CFB, OFB, CTR, GCM, ECB")
+            aes_mode = Prompt.ask("Enter AES mode").strip().upper()
+            mode = getattr(AES, f"MODE_{aes_mode}", AES.MODE_EAX)
+            cipher = KripkeAES(key, mode)
             cipher.encrypt_file(input_file, output_file)
 
         elif choice == "2":
