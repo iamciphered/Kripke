@@ -129,7 +129,7 @@ def main():
             return
 
         if choice == "1":
-            input_file = Prompt.ask("Enter the file path to encrypt").strip()
+            input_file = Prompt.ask("Enter the file path to encrypt (e.g., /home/user/document.txt)").strip()
             output_file = input_file + ".enc"
             console.print("Select AES mode: EAX, CBC, CFB, OFB, CTR, GCM, ECB")
             aes_mode = Prompt.ask("Enter AES mode").strip().upper()
@@ -138,7 +138,7 @@ def main():
             cipher.encrypt_file(input_file, output_file)
 
         elif choice == "2":
-            input_file = Prompt.ask("Enter the file path to decrypt").strip()
+            input_file = Prompt.ask("Enter the file path to decrypt (e.g., /home/user/document.txt.enc)").strip()
             output_file = input_file + ".dec"
             cipher = KripkeAES(key, AES.MODE_CBC)
             key_list = Prompt.ask("Enter a key list (comma-separated)").strip().split(',')
