@@ -17,13 +17,11 @@ MAX_FILE_SIZE_MB = 1024  # Set the maximum allowed file size for decryption to 1
 def print_banner():
     banner = """
 [bold green]
-
  #00 0000 #000000   #000000  #0000000 #00 0000 #0000000 
  #00 00   #00   00    #00    #00   00 #00 00   #00
  #00#     #000000     #00    #0000000 #00#     #000000
  #00  00  #00  000    #00    #00      #00 00   #00
  #00  000 #00   000 #000000  #00      #00 0000 #0000000
-
 [/bold green]
 [bold blue]Universal AES Encryption & Brute-Force Decryption Tool[/bold blue]
     """
