@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+import shutil
 import threading
 from rich.console import Console
 from rich.prompt import Prompt
@@ -17,11 +18,13 @@ MAX_FILE_SIZE_MB = 1024  # Set the maximum allowed file size for decryption to 1
 def print_banner():
     banner = """
 [bold green]
+
  #00 0000 #000000   #000000  #0000000 #00 0000 #0000000 
  #00 00   #00   00    #00    #00   00 #00 00   #00
  #00#     #000000     #00    #0000000 #00#     #000000
  #00  00  #00  000    #00    #00      #00 00   #00
  #00  000 #00   000 #000000  #00      #00 0000 #0000000
+
 [/bold green]
 [bold blue]Universal AES Encryption & Brute-Force Decryption Tool[/bold blue]
     """
@@ -60,7 +63,7 @@ class KripkeAES:
         temp_file = tempfile.NamedTemporaryFile(delete=False, mode='w')
         with open(temp_file.name, "w") as f:
             json.dump(encrypted_data, f, indent=2)
-        os.replace(temp_file.name, output_file)
+        shutil.move(temp_file.name, output_file)
 
         console.print(f"[bold green]File encrypted successfully: {output_file}[/bold green]")
 
