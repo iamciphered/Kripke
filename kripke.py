@@ -37,7 +37,10 @@ class KripkeAES:
         self.mode = mode
 
     def encrypt_file(self, input_file, output_file):
-        if not os.path.exists(input_file):
+        input_file = os.path.abspath(input_file)
+        output_file = os.path.abspath(output_file)
+        
+        if not os.path.isfile(input_file):
             console.print("[bold red]Error: File not found. Please check the path.[/bold red]")
             return
 
@@ -64,7 +67,10 @@ class KripkeAES:
         console.print(f"[bold green]File encrypted successfully: {output_file}[/bold green]")
 
     def decrypt_file(self, input_file, output_file, key_list=None):
-        if not os.path.exists(input_file):
+        input_file = os.path.abspath(input_file)
+        output_file = os.path.abspath(output_file)
+        
+        if not os.path.isfile(input_file):
             console.print("[bold red]Error: File not found. Please check the path.[/bold red]")
             return
 
@@ -122,16 +128,16 @@ def main():
             return
 
         if choice == "1":
-            input_file = Prompt.ask("Enter the file path to encrypt")
+            input_file = Prompt.ask("Enter the file path to encrypt").strip()
             output_file = input_file + ".enc"
             cipher = KripkeAES(key, AES.MODE_EAX)
             cipher.encrypt_file(input_file, output_file)
 
         elif choice == "2":
-            input_file = Prompt.ask("Enter the file path to decrypt")
+            input_file = Prompt.ask("Enter the file path to decrypt").strip()
             output_file = input_file + ".dec"
             cipher = KripkeAES(key, AES.MODE_CBC)
-            key_list = Prompt.ask("Enter a key list (comma-separated)").split(',')
+            key_list = Prompt.ask("Enter a key list (comma-separated)").strip().split(',')
             cipher.decrypt_file(input_file, output_file, key_list)
 
         elif choice == "3":
