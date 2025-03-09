@@ -17,7 +17,7 @@
 git clone https://github.com/iamciphered/Kripke.git
 ```
 ```bash
-cd kripke.py
+cd Kripke
 ```
 
 ### 2. Set Up a Virtual Environment (Recommended)
