@@ -5,6 +5,7 @@ import shutil
 import threading
 from rich.console import Console
 from rich.prompt import Prompt
+from rich.prompt import Confirm
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
@@ -132,7 +133,7 @@ def main():
         if choice == "1":
             input_file = Prompt.ask("Enter the file path to encrypt (e.g., /home/user/document.txt)").strip()
             output_file = input_file + ".enc"
-            password = Prompt.ask("Enter a password (optional)", default="").strip()
+            password = Prompt.ask("Enter a password (optional)", default="", password=True).strip()
             console.print("Select AES mode: EAX, CBC, CFB, OFB, CTR, GCM")
             aes_mode = Prompt.ask("Enter AES mode").strip().upper()
             mode = getattr(AES, f"MODE_{aes_mode}", AES.MODE_EAX)
@@ -142,7 +143,7 @@ def main():
         elif choice == "2":
             input_file = Prompt.ask("Enter the file path to decrypt (e.g., /home/user/document.txt.enc)").strip()
             output_file = input_file + ".dec"
-            password = Prompt.ask("Enter the password (if required)", default="").strip()
+            password = Prompt.ask("Enter the password (if required)", default="", password=True).strip()
             cipher = KripkeAES(key, AES.MODE_CBC, password)
             cipher.decrypt_file(input_file, output_file)
 
@@ -152,3 +153,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
