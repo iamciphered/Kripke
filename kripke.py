@@ -52,10 +52,7 @@ class KripkeAES:
             data = f.read()
         
         cipher, iv_or_nonce = self._get_cipher()
-        if self.mode in [AES.MODE_CBC]:
-            ciphertext = cipher.encrypt(pad(data, AES.block_size))
-        else:
-            ciphertext = cipher.encrypt(data)
+        ciphertext = cipher.encrypt(pad(data, AES.block_size))
 
         encrypted_data = {
             "mode": self.mode,
@@ -103,11 +100,7 @@ class KripkeAES:
             
             cipher, _ = self._get_cipher(iv_or_nonce, mode)
             ciphertext = base64.b64decode(encrypted_data["ciphertext"])
-            
-            if mode in [AES.MODE_CBC]:
-                decrypted_data = unpad(cipher.decrypt(ciphertext), AES.block_size)
-            else:
-                decrypted_data = cipher.decrypt(ciphertext)
+            decrypted_data = unpad(cipher.decrypt(ciphertext), AES.block_size)
 
             with open(output_file, "wb") as f:
                 f.write(decrypted_data)
@@ -115,7 +108,11 @@ class KripkeAES:
             console.print(f"[bold green]File decrypted successfully: {output_file}[/bold green]")
         except (ValueError, KeyError):
             console.print("[bold yellow]Decryption failed, attempting brute-force...[/bold yellow]")
-            self.bruteforce_decrypt(input_file, output_file, key_list)
+
+    def _get_cipher(self, iv_or_nonce=b"", mode=None):
+        mode = mode or self.mode
+        iv = iv_or_nonce or get_random_bytes(16)
+        return AES.new(self.key, mode, iv=iv), iv
 
 def main():
     key = get_random_bytes(32)
@@ -136,7 +133,7 @@ def main():
             password = Prompt.ask("Enter a password (optional)", default="", password=True).strip()
             console.print("Select AES mode: EAX, CBC, CFB, OFB, CTR, GCM")
             aes_mode = Prompt.ask("Enter AES mode").strip().upper()
-            mode = getattr(AES, f"MODE_{aes_mode}", AES.MODE_EAX)
+            mode = getattr(AES, f"MODE_{aes_mode}", AES.MODE_CBC)
             cipher = KripkeAES(key, mode, password)
             cipher.encrypt_file(input_file, output_file)
 
