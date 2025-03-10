@@ -55,7 +55,7 @@ class KripkeAES:
             ciphertext = cipher.encrypt(data)
 
         encrypted_data = {
-            "mode": self.mode.name,  # Store mode as string
+            "mode": self.mode,
             "iv_or_nonce": base64.b64encode(iv_or_nonce).decode() if iv_or_nonce else "",
             "ciphertext": base64.b64encode(ciphertext).decode()
         }
@@ -157,4 +157,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
