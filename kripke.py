@@ -111,8 +111,11 @@ class KripkeAES:
 
     def _get_cipher(self, iv_or_nonce=b"", mode=None):
         mode = mode or self.mode
-        iv = iv_or_nonce or get_random_bytes(16)
-        return AES.new(self.key, mode, iv=iv), iv
+        if mode in [AES.MODE_EAX, AES.MODE_CBC, AES.MODE_CFB, AES.MODE_OFB, AES.MODE_CTR, AES.MODE_GCM]:
+            iv = iv_or_nonce or get_random_bytes(16)
+            return AES.new(self.key, mode, nonce=iv if mode == AES.MODE_EAX else iv), iv
+        else:
+            raise ValueError("Unsupported AES mode")
 
 def main():
     key = get_random_bytes(32)
@@ -133,7 +136,10 @@ def main():
             password = Prompt.ask("Enter a password (optional)", default="", password=True).strip()
             console.print("Select AES mode: EAX, CBC, CFB, OFB, CTR, GCM")
             aes_mode = Prompt.ask("Enter AES mode").strip().upper()
-            mode = getattr(AES, f"MODE_{aes_mode}", AES.MODE_CBC)
+            mode = getattr(AES, f"MODE_{aes_mode}", None)
+            if not mode:
+                console.print("[bold red]Error: Unsupported AES mode.[/bold red]")
+                continue
             cipher = KripkeAES(key, mode, password)
             cipher.encrypt_file(input_file, output_file)
 
