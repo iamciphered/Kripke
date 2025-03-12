@@ -3,10 +3,8 @@
 **Kripke** is an advanced AES encryption and brute-force decryption tool designed for cybersecurity analysts, penetration testers, and ethical hackers. It supports all major AES encryption modes and can attempt decryption using multiple modes until a successful result is obtained.
 
 ## Features
-✅ Supports AES encryption in **EAX, CBC, CFB, OFB, CTR, GCM, and ECB** modes  
-✅ File-based encryption and decryption for secure data storage  
-✅ Brute-force decryption support with a custom key list  
-✅ Multi-threaded brute-force for faster decryption attempts  
+✅ Supports AES encryption in **EAX, CBC, CTR, and GCM** modes  
+✅ File-based encryption and decryption for secure data storage    
 ✅ Auto-detection mode to attempt decryption across all AES modes  
 ✅ Secure key handling and padded encryption for necessary modes  
 ✅ Built-in CLI interface for smooth interaction  
