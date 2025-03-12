@@ -35,13 +35,13 @@ print_banner()
 
 class KripkeAES:
     def __init__(self, password, mode):
+        if not password.isdigit() or len(password) != 4:
+            console.print("[bold red]Error: Password must be exactly 4 digits long.[/bold red]")
+            sys.exit(1)
         self.key = hashlib.sha256(password.encode()).digest()
         self.mode = mode
 
     def encrypt_file(self, input_file, output_file):
-        input_file = os.path.abspath(input_file)
-        output_file = os.path.abspath(output_file)
-        
         if not os.path.isfile(input_file):
             console.print("[bold red]Error: File not found. Please check the path.[/bold red]")
             return
@@ -58,17 +58,12 @@ class KripkeAES:
             "ciphertext": base64.b64encode(ciphertext).decode()
         }
 
-        temp_file = tempfile.NamedTemporaryFile(delete=False, mode='w')
-        with open(temp_file.name, "w") as f:
+        with open(output_file, "w") as f:
             json.dump(encrypted_data, f, indent=2)
-        shutil.move(temp_file.name, output_file)
 
         console.print(f"[bold green]File encrypted successfully: {output_file}[/bold green]")
 
     def decrypt_file(self, input_file, output_file):
-        input_file = os.path.abspath(input_file)
-        output_file = os.path.abspath(output_file)
-        
         if not os.path.isfile(input_file):
             console.print("[bold red]Error: File not found. Please check the path.[/bold red]")
             return
@@ -103,11 +98,8 @@ class KripkeAES:
 
     def _get_cipher(self, iv_or_nonce=b"", mode=None):
         mode = mode or self.mode
-        if mode in [AES.MODE_EAX, AES.MODE_CBC, AES.MODE_CFB, AES.MODE_OFB, AES.MODE_CTR, AES.MODE_GCM]:
-            iv = iv_or_nonce or get_random_bytes(16)
-            return AES.new(self.key, mode, nonce=iv if mode == AES.MODE_EAX else iv), iv
-        else:
-            raise ValueError("Unsupported AES mode")
+        iv = iv_or_nonce or get_random_bytes(16)
+        return AES.new(self.key, mode, nonce=iv if mode == AES.MODE_EAX else iv), iv
 
 def main():
     while True:
@@ -115,18 +107,17 @@ def main():
         console.print("[1] Encrypt a file")
         console.print("[2] Decrypt a file")
         console.print("[3] Exit")
-        try:
-            choice = Prompt.ask("[bold yellow]Choose an option[/bold yellow]")
-        except OSError:
-            console.print("[bold red]Input error: running in an unsupported environment.[/bold red]")
-            return
+        
+        choice = Prompt.ask("[bold yellow]Choose an option[/bold yellow]")
 
         if choice == "1":
-            input_file = Prompt.ask("Enter the file path to encrypt (e.g., /home/user/document.txt)").strip()
+            input_file = Prompt.ask("Enter the file path to encrypt").strip()
             output_file = input_file + ".enc"
-            password = Prompt.ask("Enter a password", password=True).strip()
-            console.print("Select AES mode: EAX, CBC, CFB, OFB, CTR, GCM")
-            aes_mode = Prompt.ask("Enter AES mode").strip().upper()
+            password = Prompt.ask("Enter a 4-digit numeric password", password=True).strip()
+            if not password.isdigit() or len(password) != 4:
+                console.print("[bold red]Error: Password must be exactly 4 digits long.[/bold red]")
+                continue
+            aes_mode = Prompt.ask("Enter AES mode (EAX, CBC, CFB, OFB, CTR, GCM)").strip().upper()
             mode = getattr(AES, f"MODE_{aes_mode}", None)
             if not mode:
                 console.print("[bold red]Error: Unsupported AES mode.[/bold red]")
@@ -135,10 +126,13 @@ def main():
             cipher.encrypt_file(input_file, output_file)
 
         elif choice == "2":
-            input_file = Prompt.ask("Enter the file path to decrypt (e.g., /home/user/document.txt.enc)").strip()
+            input_file = Prompt.ask("Enter the file path to decrypt").strip()
             output_file = input_file + ".dec"
-            password = Prompt.ask("Enter the password", password=True).strip()
-            cipher = KripkeAES(password, AES.MODE_CBC)  # Mode will be read from the file
+            password = Prompt.ask("Enter the 4-digit numeric password", password=True).strip()
+            if not password.isdigit() or len(password) != 4:
+                console.print("[bold red]Error: Password must be exactly 4 digits long.[/bold red]")
+                continue
+            cipher = KripkeAES(password, AES.MODE_CBC)
             cipher.decrypt_file(input_file, output_file)
 
         elif choice == "3":
