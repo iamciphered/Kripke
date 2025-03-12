@@ -80,20 +80,24 @@ class KripkeAES:
             console.print("[bold red]Error: File not found. Please check the path.[/bold red]")
             return
 
+        if os.path.getsize(input_file) == 0:  # Check if file is empty
+            console.print("[bold red]Error: The file is empty or corrupted.[/bold red]")
+            return
+
         file_size_mb = os.path.getsize(input_file) / (1024 * 1024)
         if file_size_mb > MAX_FILE_SIZE_MB:
             console.print("[bold red]Error: File too large for decryption (limit is 1GB).[/bold red]")
             return
 
-        with open(input_file, "r") as f:
-            encrypted_data = json.load(f)
-
         try:
-            mode = encrypted_data["mode"]
+            with open(input_file, "r") as f:
+                encrypted_data = json.load(f)  # This will fail if file is not valid JSON
+            
+            mode = encrypted_data.get("mode")
             if mode not in AES_MODES:
                 console.print("[bold red]Error: Unsupported AES mode found in file.[/bold red]")
                 return
-            
+
             iv_or_nonce = base64.b64decode(encrypted_data["iv_or_nonce"])
             ciphertext = base64.b64decode(encrypted_data["ciphertext"])
 
@@ -106,8 +110,11 @@ class KripkeAES:
 
             with open(output_file, "wb") as f:
                 f.write(decrypted_data)
-            
+
             console.print(f"[bold green]File decrypted successfully: {output_file}[/bold green]")
+
+        except json.JSONDecodeError:
+            console.print("[bold red]Error: The file is not a valid encrypted JSON format.[/bold red]")
         except (ValueError, KeyError):
             console.print("[bold yellow]Decryption failed: Incorrect password or mode.[/bold yellow]")
 
