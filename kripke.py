@@ -55,10 +55,15 @@ class KripkeAES:
         with open(input_file, "rb") as f:
             data = f.read()
         
-        iv_or_nonce = get_random_bytes(16)
-        cipher = AES.new(self.key, self.mode, nonce=iv_or_nonce if self.mode in [AES.MODE_EAX, AES.MODE_GCM, AES.MODE_CTR] else iv_or_nonce)
-        ciphertext = cipher.encrypt(pad(data, AES.block_size))
+        iv_or_nonce = get_random_bytes(16) if mode == "CBC" else get_random_bytes(12)
         
+        if self.mode == AES.MODE_CBC:
+            cipher = AES.new(self.key, self.mode, iv=iv_or_nonce)
+        else:
+            cipher = AES.new(self.key, self.mode, nonce=iv_or_nonce)
+
+        ciphertext = cipher.encrypt(pad(data, AES.block_size))
+
         encrypted_data = {
             "mode": mode,
             "iv_or_nonce": base64.b64encode(iv_or_nonce).decode(),
@@ -70,7 +75,7 @@ class KripkeAES:
 
         console.print(f"[bold green]File encrypted successfully: {output_file}[/bold green]")
     
-    def decrypt_file(self, input_file, output_file, password):
+    def decrypt_file(self, input_file, output_file):
         if not os.path.isfile(input_file):
             console.print("[bold red]Error: File not found. Please check the path.[/bold red]")
             return
@@ -82,7 +87,7 @@ class KripkeAES:
 
         with open(input_file, "r") as f:
             encrypted_data = json.load(f)
-        
+
         try:
             mode = encrypted_data["mode"]
             if mode not in AES_MODES:
@@ -91,7 +96,12 @@ class KripkeAES:
             
             iv_or_nonce = base64.b64decode(encrypted_data["iv_or_nonce"])
             ciphertext = base64.b64decode(encrypted_data["ciphertext"])
-            cipher = AES.new(self.key, AES_MODES[mode], nonce=iv_or_nonce if AES_MODES[mode] in [AES.MODE_EAX, AES.MODE_GCM, AES.MODE_CTR] else iv_or_nonce)
+
+            if AES_MODES[mode] == AES.MODE_CBC:
+                cipher = AES.new(self.key, AES_MODES[mode], iv=iv_or_nonce)
+            else:
+                cipher = AES.new(self.key, AES_MODES[mode], nonce=iv_or_nonce)
+
             decrypted_data = unpad(cipher.decrypt(ciphertext), AES.block_size)
 
             with open(output_file, "wb") as f:
@@ -129,7 +139,7 @@ def main():
                 encrypted_data = json.load(f)
             mode = encrypted_data.get("mode", "CBC")  # Use stored mode
             cipher = KripkeAES(password, mode)
-            cipher.decrypt_file(input_file, output_file, password)
+            cipher.decrypt_file(input_file, output_file)
 
         elif choice == "3":
             console.print("[bold magenta]Exiting...[/bold magenta]")
@@ -137,4 +147,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
