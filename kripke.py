@@ -55,12 +55,13 @@ class KripkeAES:
         with open(input_file, "rb") as f:
             data = f.read()
         
-        cipher, iv_or_nonce = self._get_cipher()
+        iv_or_nonce = get_random_bytes(16)
+        cipher = AES.new(self.key, self.mode, nonce=iv_or_nonce if self.mode in [AES.MODE_EAX, AES.MODE_GCM, AES.MODE_CTR] else iv_or_nonce)
         ciphertext = cipher.encrypt(pad(data, AES.block_size))
         
         encrypted_data = {
             "mode": mode,
-            "iv_or_nonce": base64.b64encode(iv_or_nonce).decode() if iv_or_nonce else "",
+            "iv_or_nonce": base64.b64encode(iv_or_nonce).decode(),
             "ciphertext": base64.b64encode(ciphertext).decode()
         }
         
@@ -88,11 +89,10 @@ class KripkeAES:
                 console.print("[bold red]Error: Unsupported AES mode found in file.[/bold red]")
                 return
             
-            iv_or_nonce = base64.b64decode(encrypted_data["iv_or_nonce"]) if encrypted_data["iv_or_nonce"] else b""
-            cipher = KripkeAES(password, mode)
-            cipher_obj, _ = cipher._get_cipher(iv_or_nonce)
+            iv_or_nonce = base64.b64decode(encrypted_data["iv_or_nonce"])
             ciphertext = base64.b64decode(encrypted_data["ciphertext"])
-            decrypted_data = unpad(cipher_obj.decrypt(ciphertext), AES.block_size)
+            cipher = AES.new(self.key, AES_MODES[mode], nonce=iv_or_nonce if AES_MODES[mode] in [AES.MODE_EAX, AES.MODE_GCM, AES.MODE_CTR] else iv_or_nonce)
+            decrypted_data = unpad(cipher.decrypt(ciphertext), AES.block_size)
 
             with open(output_file, "wb") as f:
                 f.write(decrypted_data)
@@ -100,11 +100,6 @@ class KripkeAES:
             console.print(f"[bold green]File decrypted successfully: {output_file}[/bold green]")
         except (ValueError, KeyError):
             console.print("[bold yellow]Decryption failed: Incorrect password or mode.[/bold yellow]")
-    
-    def _get_cipher(self, iv_or_nonce=b""):
-        iv = iv_or_nonce or get_random_bytes(16)
-        if self.mode in [AES.MODE_EAX, AES.MODE_GCM, AES.MODE_CTR, AES.MODE_CBC]:
-            return AES.new(self.key, self.mode, nonce=iv if self.mode in [AES.MODE_EAX, AES.MODE_GCM, AES.MODE_CTR] else iv), iv
 
 def main():
     while True:
