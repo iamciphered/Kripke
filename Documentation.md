@@ -13,9 +13,6 @@ Kripke is a robust and universal AES-based file encryption tool designed for cyb
 - **Cross-Platform Support (Linux, macOS, Windows)**
 
 ## Installation
-### Prerequisites
-Ensure you have Python 3.6+ installed. You also need the `pycryptodome` and `rich` libraries.
-
 ### Clone the Repository
 ```sh
 git clone https://github.com/your-repo/kripke.git
