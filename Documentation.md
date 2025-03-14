@@ -16,14 +16,17 @@ Kripke is a robust and universal AES-based file encryption tool designed for cyb
 ### Prerequisites
 Ensure you have Python 3.6+ installed. You also need the `pycryptodome` and `rich` libraries.
 
-```sh
-pip install pycryptodome rich
-```
-
 ### Clone the Repository
 ```sh
 git clone https://github.com/your-repo/kripke.git
-cd kripke
+```
+
+```sh
+cd Kripke
+```
+
+```sh
+pip install pycryptodome rich
 ```
 
 ## Usage
