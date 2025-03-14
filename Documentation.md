@@ -15,11 +15,7 @@ Kripke is a robust and universal AES-based file encryption tool designed for cyb
 ## Installation
 ### Clone the Repository
 ```sh
-git clone https://github.com/iamciphered/kripke.git
-```
-
-```sh
-cd Kripke
+https://github.com/iamciphered/Kripke/blob/main/README.md
 ```
 
 ```sh
