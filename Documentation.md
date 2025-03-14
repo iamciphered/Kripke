@@ -14,28 +14,25 @@ Kripke is a robust and universal AES-based file encryption tool designed for cyb
 
 ## Installation
 ### Prerequisites
-Ensure you have Python 3.6+ installed. 
+Ensure you have Python 3.6+ installed. You also need the `pycryptodome` and `rich` libraries.
+
+```sh
+pip install pycryptodome rich
+```
 
 ### Clone the Repository
 ```sh
 git clone https://github.com/your-repo/kripke.git
 cd kripke
 ```
-### Create a virtual environment to install python libraries
-```sh
-pyhton3 -m venv venv
-```
-```sh
-pip install -r requirements.txt
-```
+
 ## Usage
 ### Encrypting a File
 ```sh
 python kripke.py
 ```
 1. Select option **[1] Encrypt a file**.
-2. Enter the full path to the file you wish to encrypt. 
-Example: /home/user/file.txt
+2. Enter the full path to the file you wish to encrypt.
 3. Provide a **4-digit numeric password**.
 4. Choose an AES mode: **EAX, CBC, CTR, GCM**.
 5. The encrypted file will be saved with `.enc` extension.
@@ -49,6 +46,17 @@ python kripke.py
 3. Provide the correct **4-digit numeric password**.
 4. If the password is correct, the file will be decrypted and saved with `.dec` extension.
 
+## Best AES Modes for Various File Types
+| **File Type**      | **Recommended AES Mode** | **Reason** |
+|--------------------|------------------------|------------|
+| **Text Files (`.txt`, `.log`, `.csv`)** | **CBC** | Provides strong security and works well for structured data. |
+| **Documents (`.docx`, `.pdf`, `.xlsx`)** | **GCM** | Authenticated encryption prevents tampering. |
+| **Images (`.jpg`, `.png`, `.gif`)** | **CTR** | Preserves data format while ensuring security. |
+| **Audio/Video (`.mp3`, `.mp4`, `.avi`)** | **CTR** | Prevents distortion and maintains performance. |
+| **Compressed Files (`.zip`, `.rar`, `.tar.gz`)** | **GCM** | Ensures integrity and prevents corruption. |
+| **Executable Files (`.exe`, `.bin`, `.sh`)** | **EAX** | Provides authentication along with encryption. |
+| **Database Files (`.sql`, `.db`, `.mdb`)** | **CBC** | Ensures structured data encryption without compromising format. |
+
 ## Technical Details
 - **Key Generation**: The 4-digit password is hashed using SHA-256 to generate a **256-bit AES key**.
 - **IV/Nonce Handling**: A **16-byte random IV/Nonce** is generated for each encryption session and stored with the encrypted data.
@@ -56,15 +64,16 @@ python kripke.py
 - **Error Handling**: Detects incorrect passwords or unsupported modes and displays appropriate messages.
 
 ## Security Considerations
-- Ensure your **4-digit password** is kept secure. Please remember it for now, thinking of adding a bruteforce feature later in life🚀
+- Ensure your **4-digit password** is kept secure.
+- Since AES is strong, brute-forcing is impractical unless the password is weak.
 - The IV/Nonce is stored with the encrypted data, ensuring safe decryption.
 
 ## License
 Kripke is open-source and available under the **MIT License**.
 
 ## Author & Contributions
-Developed by iamciphered. Contributions are welcome! Feel free to open an issue or submit a pull request.
+Developed by [Your Name]. Contributions are welcome! Feel free to open an issue or submit a pull request.
 
 ---
-This documentation provides an in-depth understanding of Kripke and its capabilities.
+This documentation provides an in-depth understanding of Kripke and its capabilities. Let me know if you'd like any modifications! 🚀
 
