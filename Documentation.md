@@ -56,7 +56,7 @@ python kripke.py
 - **Error Handling**: Detects incorrect passwords or unsupported modes and displays appropriate messages.
 
 ## Security Considerations
-- Ensure your **4-digit password** is kept secure. Please remember it for now thinking of adding a bruteforce feature later in life🚀
+- Ensure your **4-digit password** is kept secure. Please remember it for now, thinking of adding a bruteforce feature later in life🚀
 - The IV/Nonce is stored with the encrypted data, ensuring safe decryption.
 
 ## License
