@@ -1,6 +1,6 @@
 # Kripke AES Tool - Universal AES Encryption & Decryption
 
-**Kripke** is an advanced AES encryption and brute-force decryption tool designed for cybersecurity analysts, penetration testers, and ethical hackers. It supports all major AES encryption modes and can attempt decryption using multiple modes until a successful result is obtained.
+**Kripke** is an advanced AES encryption and decryption tool designed for cybersecurity analysts, penetration testers, and ethical hackers. It supports all major AES encryption modes and can attempt decryption using multiple modes until a successful result is obtained.
 
 ## Features
 ✅ Supports AES encryption in **EAX, CBC, CTR, and GCM** modes  
