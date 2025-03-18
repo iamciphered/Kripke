@@ -8,7 +8,12 @@ from rich.prompt import Prompt
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
+from colomara import init, Fore, Back, Style
 
+import art
+init (autoreset= True)
+
+print (Fore.RED + art.text2art ("KRIPKE") + Style.RESET_ALL)
 console = Console()
 
 MAX_FILE_SIZE_MB = 1024  # 1GB limit
@@ -21,15 +26,6 @@ AES_MODES = {
 
 def print_banner():
     banner = """
-[bold green]
-
- #00 0000 #000000   #000000  #0000000 #00 0000 #0000000 
- #00 00   #00   00    #00    #00   00 #00 00   #00
- #00#     #000000     #00    #0000000 #00#     #000000
- #00  00  #00  000    #00    #00      #00 00   #00
- #00  000 #00   000 #000000  #00      #00 0000 #0000000
-
-[/bold green]
 [bold blue]Universal AES Encryption & Brute-Force Decryption Tool[/bold blue]
     """
     console.print(banner)
