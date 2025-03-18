@@ -1,7 +1,7 @@
-# Kripke: Universal AES File Encryption Tool
+# Kripke: AES File Encryption And Decryption Tool
 
 ## Overview
-Kripke is a robust and universal AES-based file encryption tool designed for cybersecurity analysts and ethical hackers. It supports multiple AES encryption modes and ensures secure file encryption and decryption using a user-specified 4-digit numeric password. The tool is optimized for efficiency and security, making it a valuable asset for protecting sensitive data.
+Kripke is a robust and universal AES-based file encryption and decryption tool designed for security purposes. It supports multiple AES encryption modes and ensures secure file encryption and decryption using a user-specified 4-digit numeric password. The tool is optimized for efficiency and security, making it a valuable asset for protecting sensitive data.
 
 ## Features
 - **Supports AES Encryption Modes**: EAX, CBC, CTR, and GCM
@@ -13,7 +13,7 @@ Kripke is a robust and universal AES-based file encryption tool designed for cyb
 - **Cross-Platform Support (Linux, macOS, Windows)**
 
 ## Installation
-Find installation procedure here https://github.com/iamciphered/Kripke/blob/main/README.md
+Find the installation procedure here https://github.com/iamciphered/Kripke/blob/main/README.md
 
 ## Usage
 ### Encrypting a File
@@ -36,15 +36,15 @@ python kripke.py
 4. If the password is correct, the file will be decrypted and saved with `.dec` extension.
 
 ## Best AES Modes for Various File Types
-| **File Type**      | **Recommended AES Mode** | **Reason** |
-|--------------------|------------------------|------------|
-| **Text Files (`.txt`, `.log`, `.csv`)** | **CBC** | Provides strong security and works well for structured data. |
-| **Documents (`.docx`, `.pdf`, `.xlsx`)** | **GCM** | Authenticated encryption prevents tampering. |
-| **Images (`.jpg`, `.png`, `.gif`)** | **CTR** | Preserves data format while ensuring security. |
-| **Audio/Video (`.mp3`, `.mp4`, `.avi`)** | **CTR** | Prevents distortion and maintains performance. |
-| **Compressed Files (`.zip`, `.rar`, `.tar.gz`)** | **GCM** | Ensures integrity and prevents corruption. |
-| **Executable Files (`.exe`, `.bin`, `.sh`)** | **EAX** | Provides authentication along with encryption. |
-| **Database Files (`.sql`, `.db`, `.mdb`)** | **CBC** | Ensures structured data encryption without compromising format. |
+| **File Type**      | **Recommended AES Mode** |
+|--------------------|------------------------|
+| **Text Files (`.txt`, `.log`, `.csv`)** | **CBC** |
+| **Documents (`.docx`, `.pdf`, `.xlsx`)** | **GCM** |
+| **Images (`.jpg`, `.png`, `.gif`)** | **CTR** |
+| **Audio/Video (`.mp3`, `.mp4`, `.avi`)** | **CTR** |
+| **Compressed Files (`.zip`, `.rar`, `.tar.gz`)** | **GCM** |
+| **Executable Files (`.exe`, `.bin`, `.sh`)** | **EAX** |
+| **Database Files (`.sql`, `.db`, `.mdb`)** | **CBC** |
 
 ## Technical Details
 - **Key Generation**: The 4-digit password is hashed using SHA-256 to generate a **256-bit AES key**.
@@ -58,11 +58,10 @@ python kripke.py
 - The IV/Nonce is stored with the encrypted data, ensuring safe decryption.
 
 ## License
-Kripke is open-source and available under the **MIT License**.
+Kripke is open-source and licensed under the **MIT License**.
 
 ## Author & Contributions
-Developed by [Your Name]. Contributions are welcome! Feel free to open an issue or submit a pull request.
+Developed by iamciphered. Contributions are welcome! Feel free to open an issue or submit a pull request.
 
----
-This documentation provides an in-depth understanding of Kripke and its capabilities. Let me know if you'd like any modifications! 🚀
+--- 🚀
 
