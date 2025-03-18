@@ -24,14 +24,6 @@ AES_MODES = {
     "GCM": AES.MODE_GCM
 }
 
-def print_banner():
-    banner = """
-[bold blue]Universal AES Encryption & Brute-Force Decryption Tool[/bold blue]
-    """
-    console.print(banner)
-
-print_banner()
-
 class KripkeAES:
     def __init__(self, password, mode):
         if not password.isdigit() or len(password) != 4:
