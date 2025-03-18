@@ -4,9 +4,8 @@
 
 ## Features
 ✅ Supports AES encryption in **EAX, CBC, CTR, and GCM** modes  
-✅ File-based encryption and decryption for secure data storage    
-✅ Auto-detection mode to attempt decryption across all AES modes  
-✅ Secure key handling and padded encryption for necessary modes  
+✅ File-based encryption and decryption for secure data storage and exchange   
+✅ Auto-detection mode to attempt decryption across all AES modes    
 ✅ Built-in CLI interface for smooth interaction  
 
 ## Installation on Kali Linux
