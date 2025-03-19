@@ -137,7 +137,7 @@ def main():
             cipher.decrypt_file(input_file, output_file)
 
         elif choice == "3":
-            console.print("[bold magenta]Exiting...[/bold magenta]")
+            console.print("[bold cyan]Exiting...[/bold cyan]")
             break
 
 if __name__ == "__main__":
