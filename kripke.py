@@ -13,7 +13,7 @@ from colorama import init, Fore, Back, Style
 import art
 init (autoreset= True)
 
-print (Fore.RED + art.text2art ("KRIPKE") + Style.RESET_ALL)
+print (Fore.RED + art.text2art ("KRIPKE", font="block")) + Style.RESET_ALL)
 console = Console()
 
 MAX_FILE_SIZE_MB = 1024  # 1GB limit
@@ -108,7 +108,7 @@ class KripkeAES:
 
 def main():
     while True:
-        console.print("\n[bold cyan]Kripke: Universal AES File Encryption Tool[/bold cyan]")
+        console.print("\n[bold cyan]Kripke: AES File Encryption & Decryption Tool[/bold cyan]")
         console.print("[1] Encrypt a file")
         console.print("[2] Decrypt a file")
         console.print("[3] Exit")
