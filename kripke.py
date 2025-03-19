@@ -13,7 +13,7 @@ from colorama import init, Fore, Back, Style
 import art
 init (autoreset= True)
 
-print (Fore.GREEN + art.text2art ("KRIPKE", font="3d") + Style.RESET_ALL)
+print (Fore.GREEN + art.text2art ("K R I P K E", font="3d") + Style.RESET_ALL)
 console = Console()
 
 MAX_FILE_SIZE_MB = 1024  # 1GB limit
